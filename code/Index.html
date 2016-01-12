@@ -1,0 +1,83 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Untitled Document</title>
+</head>
+<script src="/socket.io/socket.io.js"></script>
+<script type="text/javascript">
+var socket = io.connect('http://localhost:3000');
+    
+window.onload = function() {
+ 
+    var content = document.getElementById("content");
+ 
+    socket.on('message', function (data) {
+        if(data.msg) {
+            var html = '<figure>';
+			html+= '<figcaption><p>';
+			html+=data.username;
+			html+= '</p></figcaption><p>'
+			html+=data.msg
+			html+='</p></figure>';
+        	content.innerHTML += html;
+        } else {
+            console.log("There is a problem:", data);
+        }
+    });
+}
+function Send() {
+        var msg = document.getElementById("Message");
+        var text = msg.value;
+		var name = document.getElementById("Name");
+	
+		if(name.value == "") {
+            alert("Please type your name!");
+			return;
+		}
+		if(msg.value == "") {
+            alert("Sorry cant send an empty message");
+			return;
+		}
+		socket.emit('send', { msg: text, username: name.value });
+        
+};
+</script>
+<style>
+figure{
+	width:500px;
+	height:500px;
+    border: solid #b1b1b1 2px;
+    /*background-color: #e4e4e4;*/
+padding:10px;
+display:table;
+box-shadow: 8px 8px 5px #363636;
+float:left
+}
+figcaption{
+	border: solid #b1b1b1 2px;
+    background-color: #e4e4e4;
+}
+
+/*@media (min-width: 300px) and (max-width: 600px){
+	figure{ width:30%;}
+	
+}*/
+</style>
+</head>
+<body>
+<div id="header">
+<section id="offer"> 
+    <!-- The offer section displays a banner text for promotions -->
+  <p>Name</p>
+  <input type="text" id="Name" value="Name"/>
+  <p>Message</p>
+  <input type="text" id="Message" value="Message"/>
+  <p/>
+  <input type="button" value="Send" onclick="Send()"/> 
+  </section>
+  <div id="content">
+</div>
+
+</body>
+</html>
